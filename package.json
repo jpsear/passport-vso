@@ -1,30 +1,29 @@
 {
-  "name": "passport-windowslive",
-  "version": "1.0.1",
-  "description": "Windows Live authentication strategy for Passport.",
+  "name": "passport-vso",
+  "version": "0.0.1",
+  "description": "Vidual Studio Online authentication strategy for Passport.",
   "keywords": [
     "passport",
     "microsoft",
-    "windowslive",
-    "msn",
-    "hotmail",
-    "outlook",
+    "vso",
+    "visual",
+    "studio",
+    "online",
     "auth",
     "authn",
     "authentication",
     "identity"
   ],
   "author": {
-    "name": "Jared Hanson",
-    "email": "jaredhanson@gmail.com",
-    "url": "http://www.jaredhanson.net/"
+    "name": "Patrick Hallisey",
+    "email": "hallipr@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jaredhanson/passport-windowslive.git"
+    "url": "git://github.com/hallipr/passport-vso.git"
   },
   "bugs": {
-    "url": "http://github.com/jaredhanson/passport-windowslive/issues"
+    "url": "http://github.com/jaredhanson/passport-vso/issues"
   },
   "licenses": [
     {
