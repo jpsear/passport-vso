@@ -1,10 +1,12 @@
 var express = require('express')
   , passport = require('passport')
   , util = require('util')
-  , WindowsLiveStrategy = require('passport-windowslive').Strategy;
+  , http = require('http')
+  , https = require('https')
+  , VsoStrategy = require('passport-vso').Strategy;
 
-var WINDOWS_LIVE_CLIENT_ID = "--insert-windows-live-client-id-here--"
-var WINDOWS_LIVE_CLIENT_SECRET = "--insert-windows-live-client-secret-here--";
+var VSO_CLIENT_ID = "B193AAA6-8D28-44C9-966B-FEC7F12B3AD6";
+var VSO_CLIENT_SECRET = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im9PdmN6NU1fN3AtSGpJS2xGWHo5M3VfVjBabyJ9.eyJjaWQiOiJiMTkzYWFhNi04ZDI4LTQ0YzktOTY2Yi1mZWM3ZjEyYjNhZDYiLCJjc2kiOiI3ZTNjMjNmNy0zMGQ2LTQ3M2QtYjUwZS1kYzBjNjEzNjM4Y2EiLCJuYW1laWQiOiIyZGI3Nzg5ZS01ZjI3LTQxZjMtOWIzZS01ZDZkYWM5M2E4OTkiLCJpc3MiOiJhcHAudnNzcHMudmlzdWFsc3R1ZGlvLmNvbSIsImF1ZCI6ImFwcC52c3Nwcy52aXN1YWxzdHVkaW8uY29tIiwibmJmIjoxNDM1ODE2ODY5LCJleHAiOjE0NjczNTI4Njl9.PNMzKYQTg5_u36X17FKFXAEAE8y7jyDxWaqMthpk7Qfx3d1I3LC9iEtQ4EfX42EVItLrx1EYoNbV0vAkTyAaU61vZ3qrh-JIocEhl8Qh0zpyjGa6Ga-YKnOyC7cJgWzKltuiIjo81W8cPDW48dmiD3nMLxEVm951n6bajhskYg34w_03C6O9hJu27IeR98ekQpQsDsIk7av1ZPMp1Ir9AccsFtGO_iyjo1XLC3psEH-9yzIa8G4mjS4vxYiUFgyswp3ILe00G_iKu2Ux8eKa1pkjyOfPGhtgq8jRqk9pbgDF0RS1WlSLsKZKa4mcY6NIB3hmEKdTy5JPzygJHzpVzg";
 
 
 // Passport session setup.
@@ -23,14 +25,14 @@ passport.deserializeUser(function(obj, done) {
 });
 
 
-// Use the WindowsLiveStrategy within Passport.
+// Use the VsoStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
 //   credentials (in this case, an accessToken, refreshToken, and Windows Live
 //   profile), and invoke a callback with a user object.
-passport.use(new WindowsLiveStrategy({
-    clientID: WINDOWS_LIVE_CLIENT_ID,
-    clientSecret: WINDOWS_LIVE_CLIENT_SECRET,
-    callbackURL: "http://self.hansonhq.com:3000/auth/windowslive/callback"
+passport.use(new VsoStrategy({
+    clientID: VSO_CLIENT_ID,
+    clientSecret: VSO_CLIENT_SECRET,
+    callbackURL: "https://localhost.azurewebsites.net/auth/vso/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
@@ -48,7 +50,9 @@ passport.use(new WindowsLiveStrategy({
 
 
 
-var app = express.createServer();
+var app = express();
+
+https.createServer({ pfx: fs.readFileSync(__dirname + '/certificate.pfx'), passphrase: 'Password' }, app).listen(443);
 
 // configure Express
 app.configure(function() {
@@ -80,26 +84,26 @@ app.get('/login', function(req, res){
   res.render('login', { user: req.user });
 });
 
-// GET /auth/windowslive
+// GET /auth/vso
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  The first step in Windows Live authentication will involve
 //   redirecting the user to live.com.  After authorization, Windows Live
 //   will redirect the user back to this application at
-//   /auth/windowslive/callback
-app.get('/auth/windowslive',
-  passport.authenticate('windowslive', { scope: ['wl.signin', 'wl.basic'] }),
+//   /auth/vso/callback
+app.get('/auth/vso',
+  passport.authenticate('vso', { scope: ['profile'] }),
   function(req, res){
     // The request will be redirected to Windows Live for authentication, so
     // this function will not be called.
   });
 
-// GET /auth/windowslive/callback
+// GET /auth/vso/callback
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  If authentication fails, the user will be redirected back to the
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
-app.get('/auth/windowslive/callback', 
-  passport.authenticate('windowslive', { failureRedirect: '/login' }),
+app.get('/auth/vso/callback', 
+  passport.authenticate('vso', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/');
   });
@@ -119,5 +123,5 @@ app.listen(3000);
 //   login page.
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
+  res.redirect('/login');
 }
