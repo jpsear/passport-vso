@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  if user
+    h2 Hello, #{ user.displayName }.
+  else
+    h2 Welcome! Please log in.

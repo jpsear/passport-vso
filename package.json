@@ -3,20 +3,20 @@
   "version": "0.0.1",
   "description": "Vidual Studio Online authentication strategy for Passport.",
   "keywords": [
-    "passport",
-    "microsoft",
-    "vso",
-    "visual",
-    "studio",
-    "online",
     "auth",
-    "authn",
     "authentication",
-    "identity"
+    "authn",
+    "identity",
+    "microsoft",
+    "online",
+    "passport",
+    "studio",
+    "visual",
+    "vso"
   ],
   "author": {
-    "name": "Patrick Hallisey",
-    "email": "hallipr@gmail.com"
+    "email": "hallipr@gmail.com",
+    "name": "Patrick Hallisey"
   },
   "repository": {
     "type": "git",
@@ -36,8 +36,8 @@
     "passport-oauth2": "1.x.x"
   },
   "devDependencies": {
-    "mocha": "1.x.x",
-    "chai": "1.x.x"
+    "chai": "1.x.x",
+    "mocha": "1.x.x"
   },
   "engines": {
     "node": ">= 0.4.0"

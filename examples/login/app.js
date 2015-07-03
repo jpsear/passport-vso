@@ -1,9 +1,11 @@
-var express = require('express')
-  , passport = require('passport')
-  , util = require('util')
-  , http = require('http')
-  , https = require('https')
-  , VsoStrategy = require('passport-vso').Strategy;
+var express = require('express');
+var path = require('path');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var passport = require('passport');
+var VsoStrategy = require('passport-vso').Strategy;
 
 var VSO_CLIENT_ID = "B193AAA6-8D28-44C9-966B-FEC7F12B3AD6";
 var VSO_CLIENT_SECRET = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im9PdmN6NU1fN3AtSGpJS2xGWHo5M3VfVjBabyJ9.eyJjaWQiOiJiMTkzYWFhNi04ZDI4LTQ0YzktOTY2Yi1mZWM3ZjEyYjNhZDYiLCJjc2kiOiI3ZTNjMjNmNy0zMGQ2LTQ3M2QtYjUwZS1kYzBjNjEzNjM4Y2EiLCJuYW1laWQiOiIyZGI3Nzg5ZS01ZjI3LTQxZjMtOWIzZS01ZDZkYWM5M2E4OTkiLCJpc3MiOiJhcHAudnNzcHMudmlzdWFsc3R1ZGlvLmNvbSIsImF1ZCI6ImFwcC52c3Nwcy52aXN1YWxzdHVkaW8uY29tIiwibmJmIjoxNDM1ODE2ODY5LCJleHAiOjE0NjczNTI4Njl9.PNMzKYQTg5_u36X17FKFXAEAE8y7jyDxWaqMthpk7Qfx3d1I3LC9iEtQ4EfX42EVItLrx1EYoNbV0vAkTyAaU61vZ3qrh-JIocEhl8Qh0zpyjGa6Ga-YKnOyC7cJgWzKltuiIjo81W8cPDW48dmiD3nMLxEVm951n6bajhskYg34w_03C6O9hJu27IeR98ekQpQsDsIk7av1ZPMp1Ir9AccsFtGO_iyjo1XLC3psEH-9yzIa8G4mjS4vxYiUFgyswp3ILe00G_iKu2Ux8eKa1pkjyOfPGhtgq8jRqk9pbgDF0RS1WlSLsKZKa4mcY6NIB3hmEKdTy5JPzygJHzpVzg";
@@ -32,7 +34,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new VsoStrategy({
     clientID: VSO_CLIENT_ID,
     clientSecret: VSO_CLIENT_SECRET,
-    callbackURL: "https://localhost.azurewebsites.net/auth/vso/callback"
+    callbackURL: "https://localhost.net/auth/vso/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
@@ -47,30 +49,23 @@ passport.use(new VsoStrategy({
   }
 ));
 
-
-
-
 var app = express();
 
-https.createServer({ pfx: fs.readFileSync(__dirname + '/certificate.pfx'), passphrase: 'Password' }, app).listen(443);
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
-// configure Express
-app.configure(function() {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.use(express.logger());
-  app.use(express.cookieParser());
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.session({ secret: 'keyboard cat' }));
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-});
-
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(session({ secret: 'keyboard cat' }));
+// Initialize Passport!  Also use passport.session() middleware, to support
+// persistent login sessions (recommended).
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', function(req, res){
   res.render('index', { user: req.user });
@@ -113,8 +108,21 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-app.listen(3000);
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
 
+// error handler
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: err
+  });
+});
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -125,3 +133,5 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
 }
+
+module.exports = app;
