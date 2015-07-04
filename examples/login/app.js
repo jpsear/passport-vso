@@ -16,7 +16,7 @@ var VSO_CLIENT_SECRET = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im9PdmN6NU1
 //   serialize users into and deserialize users out of the session.  Typically,
 //   this will be as simple as storing the user ID when serializing, and finding
 //   the user by ID when deserializing.  However, since this example does not
-//   have a database of user records, the complete Windows Live profile is
+//   have a database of user records, the complete Visual Studio Online profile is
 //   serialized and deserialized.
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -29,20 +29,21 @@ passport.deserializeUser(function(obj, done) {
 
 // Use the VsoStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
-//   credentials (in this case, an accessToken, refreshToken, and Windows Live
+//   credentials (in this case, an accessToken, refreshToken, and Visual Studio Online
 //   profile), and invoke a callback with a user object.
 passport.use(new VsoStrategy({
     clientID: VSO_CLIENT_ID,
     clientSecret: VSO_CLIENT_SECRET,
-    callbackURL: "https://localhost.net/auth/vso/callback"
+    callbackURL: "https://localhost.net/auth/vso/callback",
+    scope: "vso.profile"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
     process.nextTick(function () {
       
-      // To keep the example simple, the user's Windows Live profile is returned
+      // To keep the example simple, the user's Visual Studio Online profile is returned
       // to represent the logged-in user.  In a typical application, you would
-      // want to associate the Windows Live account with a user record in your
+      // want to associate the Visual Studio Online account with a user record in your
       // database, and return that user instead.
       return done(null, profile);
     });
@@ -81,14 +82,14 @@ app.get('/login', function(req, res){
 
 // GET /auth/vso
 //   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in Windows Live authentication will involve
-//   redirecting the user to live.com.  After authorization, Windows Live
+//   request.  The first step in Visual Studio Online authentication will involve
+//   redirecting the user to live.com.  After authorization, Visual Studio Online
 //   will redirect the user back to this application at
 //   /auth/vso/callback
 app.get('/auth/vso',
-  passport.authenticate('vso', { scope: ['profile'] }),
+  passport.authenticate('vso'),
   function(req, res){
-    // The request will be redirected to Windows Live for authentication, so
+    // The request will be redirected to Visual Studio Online for authentication, so
     // this function will not be called.
   });
 

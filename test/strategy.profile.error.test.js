@@ -1,13 +1,13 @@
 /* global describe, it, expect, before */
 /* jshint expr: true, multistr: true */
 
-var WindowsLiveStrategy = require('../lib/strategy');
+var VsoStrategy = require('../lib/strategy');
 
 
 describe('Strategy#userProfile', function() {
     
   describe('handling API errors', function() {
-    var strategy =  new WindowsLiveStrategy({
+    var strategy =  new VsoStrategy({
         clientID: 'ABC123',
         clientSecret: 'secret'
       },
@@ -15,7 +15,7 @@ describe('Strategy#userProfile', function() {
   
     // mock
     strategy._oauth2.get = function(url, accessToken, callback) {
-      if (url != 'https://apis.live.net/v5.0/me') { return callback(new Error('wrong url argument')); }
+      if (url != 'https://app.vssps.visualstudio.com/_apis/profile/profiles/me?api-version=1.0') { return callback(new Error('wrong url argument')); }
       if (accessToken != 'token') { return callback(new Error('wrong token argument')); }
     
       var body = '{ \
@@ -39,14 +39,14 @@ describe('Strategy#userProfile', function() {
   
     it('should error', function() {
       expect(err).to.be.an.instanceOf(Error);
-      expect(err.constructor.name).to.equal('LiveConnectAPIError');
+      expect(err.constructor.name).to.equal('VsoRestApiError');
       expect(err.message).to.equal('The provided access token has expired.');
       expect(err.code).to.equal('request_token_expired');
     });
   });
   
   describe('handling malformed responses', function() {
-    var strategy =  new WindowsLiveStrategy({
+    var strategy =  new VsoStrategy({
         clientID: 'ABC123',
         clientSecret: 'secret'
       },
@@ -54,7 +54,7 @@ describe('Strategy#userProfile', function() {
   
     // mock
     strategy._oauth2.get = function(url, accessToken, callback) {
-      if (url != 'https://apis.live.net/v5.0/me') { return callback(new Error('wrong url argument')); }
+      if (url != 'https://app.vssps.visualstudio.com/_apis/profile/profiles/me?api-version=1.0') { return callback(new Error('wrong url argument')); }
       if (accessToken != 'token') { return callback(new Error('wrong token argument')); }
     
       var body = 'Hello, world.';

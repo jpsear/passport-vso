@@ -1,19 +1,19 @@
 /* global describe, it, expect */
 /* jshint expr: true */
 
-var WindowsLiveStrategy = require('../lib/strategy');
+var VsoStrategy = require('../lib/strategy');
 
 
 describe('Strategy', function() {
     
-  var strategy = new WindowsLiveStrategy({
+  var strategy = new VsoStrategy({
       clientID: 'ABC123',
       clientSecret: 'secret'
     },
     function() {});
     
-  it('should be named windowslive', function() {
-    expect(strategy.name).to.equal('windowslive');
+  it('should be named vso', function() {
+    expect(strategy.name).to.equal('vso');
   });
   
 });

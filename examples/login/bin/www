@@ -20,7 +20,7 @@ app.set('port', port);
  * Create HTTPS server.
  */
 
-var server = https.createServer({ pfx: fs.readFileSync(__dirname + '/../certificate.pfx'), passphrase: 'Password' }, app);
+var server = https.createServer({ pfx: fs.readFileSync(__dirname + '/../localhost.net.pfx'), passphrase: 'Password' }, app);
 
 /**
  * Listen on provided port, on all network interfaces.
