@@ -67,7 +67,7 @@ For a complete, working example, refer to the [login example](https://github.com
   - [Patrick Hallisey](http://github.com/hallipr)
   - Mickey Mullin
   
-Forked from [passport-windowslive](https://github.com/jaredhanson/passport-vso) by [Jared Hanson](https://github.com/jaredhanson)
+Forked from [passport-windowslive](https://github.com/jaredhanson/passport-windowslive) by [Jared Hanson](https://github.com/jaredhanson)
 
 ## License
 
