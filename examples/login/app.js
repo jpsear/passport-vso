@@ -35,7 +35,8 @@ passport.use(new VsoStrategy({
     clientID: VSO_CLIENT_ID,
     clientSecret: VSO_CLIENT_SECRET,
     callbackURL: "https://localhost.net/auth/vso/callback",
-    scope: "vso.profile"
+    scope: "vso.profile",
+    state: true
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
