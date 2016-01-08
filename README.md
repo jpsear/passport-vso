@@ -19,22 +19,58 @@ integrated into any application or framework that supports
 #### Configure Strategy
 
 The Visual Studio Online authentication strategy authenticates users using a VSO
-account and OAuth 2.0 JWT bearer tokens.  The strategy requires a `verify` callback,
-which accepts these credentials and calls `done` providing a user, as well as
-`options` specifying a client ID, client secret, and callback URL.
+account and OAuth 2.0 JWT bearer tokens.  
 
-    passport.use(new VsoOAuth2Strategy({
-        clientID: VSO_CLIENT_ID,
-        clientSecret: VSO_CLIENT_SECRET,
-        callbackURL: "http://www.example.com/auth/vso/callback"
-      },
-      function(accessToken, refreshToken, profile, done) {
-        User.findOrCreate({ vsoId: profile.id }, function (err, user) {
-          return done(err, user);
-        });
-      }
-    ));
+The strategy is constructed with 2 parameters
+``` javascript
+    new VsoOAuth2Strategy(options, verify)
+```
 
+Applications must supply a `verify` callback, for which the function signature is:
+``` javascript
+    function([req], accessToken, refreshToken, [params], profile, done) { ... }
+````
+
+The use of the req argument is controlled by the option 
+ 
+The verify callback is responsible for finding or creating the user, and invoking `done` with the following arguments:
+``` javascript
+    done(err, user, info);
+```
+
+`user` should be set to `false` to indicate an authentication failure.
+
+Additional `info` can optionally be passed as a third argument, typically
+used to display informational messages.  If an exception occured, `err`
+should be set.
+ 
+Options:
+- `authorizationURL`  URL used to obtain an authorization grant (default: VSO auth url)
+- `tokenURL`          URL used to obtain an access token (default: VSO token url)
+- `profileURL`        URL used to obtain a user profile (default: VSO user profile url)
+- `sessionKey`        key used to store auth info on session (default: 'vso:' + authorizationURL hostname)
+- `clientID`          identifies client to service provider
+- `clientSecret`      secret used to establish ownership of the client identifer
+- `callbackURL`       URL to which the service provider will redirect the user after obtaining authorization
+- `passReqToCallback` when `true`, `req` is the first argument to the verify callback (default: `false`)
+
+```javascript
+    passport.use(
+        new VsoOAuth2Strategy({
+                clientID: VSO_CLIENT_ID,
+                clientSecret: VSO_CLIENT_SECRET,
+                callbackURL: "http://www.example.com/auth/vso/callback",
+                passReqToCallback: true
+            },
+            function(req, accessToken, refreshToken, params, profile, done) {
+                // token expiration info available from params.expires_in
+                User.findOrCreate({ vsoId: profile.id }, function (err, user) {
+                    return done(err, user);
+                });
+            }
+        )
+    );
+```
 #### Authenticate Requests
 
 Use `passport.authenticate()`, specifying the `'vso'` strategy, to
