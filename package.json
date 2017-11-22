@@ -1,6 +1,6 @@
 {
-  "name": "passport-vso",
-  "version": "0.0.3",
+  "name": "passport-vso-custom",
+  "version": "0.0.4",
   "description": "Visual Studio Online authentication strategy for Passport.",
   "keywords": [
     "auth",
@@ -15,15 +15,15 @@
     "vso"
   ],
   "author": {
-    "email": "hallipr@gmail.com",
-    "name": "Patrick Hallisey"
+    "email": "jpsear@gmail.com",
+    "name": "James Sear"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/hallipr/passport-vso.git"
+    "url": "git@github.com:jpsear/passport-vso.git"
   },
   "bugs": {
-    "url": "http://github.com/hallipr/passport-vso/issues"
+    "url": "https://github.com/jpsear/passport-vso/issues"
   },
   "licenses": [
     {
